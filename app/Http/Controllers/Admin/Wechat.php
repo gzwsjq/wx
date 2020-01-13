@@ -222,4 +222,34 @@ class Wechat extends Controller{
 
 
 
+    //群发视图
+    public function mass(){
+        return view('wechat.mass');
+    }
+
+
+    //群发
+    public function masstexting(){
+        $name = request()->name;
+        //dd($name);
+        $res = Status::where('is_del','=',1)->select('openid')->get()->toArray();
+        $openid = array_column($res,'openid');
+        //dd($openid);
+        $access_token = Wechats::getAccessToken();
+        $url = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=".$access_token;
+
+        $postData = [
+            "touser"=> $openid,
+            "msgtype"=>"text",
+            "text"=> [
+                "content"=>$name
+            ]
+        ];
+        $postData = json_encode($postData,JSON_UNESCAPED_UNICODE);
+        $data = Curl::post($url,$postData);
+        var_dump($data);
+    }
+
+
+
 }
