@@ -18,6 +18,10 @@ Route::any('/wechat/index','Admin\Wechat@index');
 Route::any('/wechat/wx','Admin\Wechat@wx');//测试
 Route::any('wechat/mass', 'Admin\Wechat@mass');   //群发
 Route::any('wechat/masstexting', 'Admin\Wechat@masstexting');   //群发
+Route::any('wechat/getuser', 'Admin\Wechat@getuser');   //微信网络授权
+Route::any('wechat/auth', 'Admin\Wechat@auth');   //接收code
+
+
 
 Route::prefix('admin')->middleware('checklogin')->group(function(){
     Route::get('/','Admin\AddletController@index');//后台首页

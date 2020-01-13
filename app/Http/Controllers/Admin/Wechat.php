@@ -250,6 +250,27 @@ class Wechat extends Controller{
         var_dump($data);
     }
 
+    //网络授权以及获取用户的信息
+    public function getuser(){
+        $appid=env("WX_APPID");
+        $redirect_uri=urlencode(env('WX_AUTH_REDIRECT_URI'));
+        $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$appid."&redirect_uri=".$redirect_uri."&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+        echo $url;
+    }
+
+    //接收用户的code
+    public function auth(){
+        $code=request()->code;
+
+        //换取access_token
+        $url=" https://api.weixin.qq.com/sns/oauth2/access_token?appid=".env("WX_APPID")."&secret=".env("WX_APPSECRET")."&code=".$code."&grant_type=authorization_code";
+        $cdata=file_get_contents($url);
+        $arr=json_decode($cdata,true);
+    }
+
+
+
+
 
 
 }
