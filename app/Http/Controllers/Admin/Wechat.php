@@ -299,6 +299,9 @@ class Wechat extends Controller{
         foreach($user_list as $k=>$v){
             $key='h:user_info'.$v;
             $u=Redis::hGetAll($key);
+            if(empty($u)){
+                continue;
+            }
             //print_r($u);
             echo "<img src='".$u['headimgurl']."'>";
 
