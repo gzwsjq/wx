@@ -10,6 +10,7 @@ use App\Model\Chan;
 use App\Model\Status;
 use DB;
 use App\Tools\Curl;
+use Illuminate\Support\Facades\Redis;
 
 
 class Wechat extends Controller{
@@ -194,24 +195,25 @@ class Wechat extends Controller{
         $wxdo=[
             "button"=>[
         [
-            "type"=>"location_select",
-            "name"=>"发送位置",
-            "key"=>"rselfmenu_2_0",
+            "type"=>"view",
+            "name"=>"签到",
+            "url"=>"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1135f9fbcc72574d&redirect_uri=http%3A%2F%2F1906guoziwen.comcto.com%2Fwechat%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect",
         ],
-      [
-          "name"=>"菜单",
-           "sub_button"=>[
-           [
-               "type"=>"view",
-               "name"=>"搜索",
-               "url"=>"http://www.soso.com/"
-            ],
-            [
-                "type"=>"click",
-               "name"=>"赞一下我们",
-               "key"=>"V1001_GOOD"
-            ]]
-       ]]
+//      [
+//          "name"=>"菜单",
+//           "sub_button"=>[
+//           [
+//               "type"=>"view",
+//               "name"=>"搜索",
+//               "url"=>"http://www.soso.com/"
+//            ],
+//            [
+//                "type"=>"click",
+//               "name"=>"赞一下我们",
+//               "key"=>"V1001_GOOD"
+//            ]]
+//       ]
+            ]
 
         ];
 
@@ -273,6 +275,12 @@ class Wechat extends Controller{
         $user_info=file_get_contents($url);
         $user_arr=json_decode($user_info,true);
         print_r($user_arr);
+
+        //用户签到 记录用户签到并显示用户的头像
+        $redis_key='checkin:'.date('Y-m-d');
+        Redis::zadd($redis_key,time(),$user_arr['openid']);
+        echo $user_arr['nickname']."签到成功";
+
     }
 
 

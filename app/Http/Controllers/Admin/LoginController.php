@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Model\login;
+use App\Model\Login;
 use DB;
 
 class LoginController extends Controller{
@@ -19,9 +19,9 @@ class LoginController extends Controller{
             ['account','=',$post['account']],
             ['pwd','=',$post['pwd']]
         ];
-        DB::table('login')->where($where)->update(['ctime'=>time()]);
+        Login::where($where)->update(['ctime'=>time()]);
 
-        $res=DB::table('Login')->where($where)->first();
+        $res=Login::where($where)->first();
 
         //密码错误三次锁定一小时
         $id=Login::where('account','=',$post['account'])->value('id');
