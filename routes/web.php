@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::any('/wechat/index','Admin\Wechat@index');
+Route::any('/wechat/info','Admin\Wechat@info');//phpinfo
 Route::any('/wechat/wx','Admin\Wechat@wx');//测试
 Route::any('wechat/mass', 'Admin\Wechat@mass');   //群发
 Route::any('wechat/masstexting', 'Admin\Wechat@masstexting');   //群发

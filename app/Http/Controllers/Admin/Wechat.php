@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Redis;
 class Wechat extends Controller{
     private $array=["紫萝卜","水萝卜","绿箩卜","红萝卜","白萝卜"];
 
+    public function info(){
+        echo phpinfo();
+    }
+
     public function index(Request $request){
        //提交按钮 微信服务器以get形式 echostr 原样输出echostr即可
 //        $echostr=request()->input('echostr');
@@ -270,16 +274,35 @@ class Wechat extends Controller{
         $arr=json_decode($cdata,true);
         print_r($arr);
 
+
         //获取用户信息
         $url='https://api.weixin.qq.com/sns/userinfo?access_token='.$arr['access_token'].'&openid='.$arr['openid'].'&lang=zh_CN';
         $user_info=file_get_contents($url);
         $user_arr=json_decode($user_info,true);
         print_r($user_arr);
 
+        //将用户的信息保存在  redis hash中
+        $key='h:user_info'.$user_arr['openid'];
+        Redis::hMset($key,$user_arr);
+
         //用户签到 记录用户签到并显示用户的头像
         $redis_key='checkin:'.date('Y-m-d');
         Redis::zadd($redis_key,time(),$user_arr['openid']);
-        echo $user_arr['nickname']."签到成功";
+        echo $user_arr['nickname']."签到成功"."签到时间:".date("Y-m-d H:i:s");
+        echo "<hr>";
+
+        $user_list=Redis::zrange($redis_key,0,-1);
+        //echo "<hr>";
+        //print_r($user_list);
+
+
+        foreach($user_list as $k=>$v){
+            $key='h:user_info'.$v;
+            $u=Redis::hGetAll($key);
+            //print_r($u);
+            echo "<img src='".$u['headimgurl']."'>";
+
+        }
 
     }
 
